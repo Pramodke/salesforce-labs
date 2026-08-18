@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Lookup Integration Lab (complete, step by step)</title>
+<style>
+  :root{--navy:#032D60;--navy2:#0B5CAB;--blue:#0176D3;--sky:#6FC5FF;--tint:#EAF4FE;
+        --txt:#16264D;--mut:#5C7099;--green:#2E844A;--coral:#E8482F;--amber:#C77A12;
+        --line:#CFE0F3;--codebg:#0A1F3D;--codefg:#D6E8FF;--atint:#FFF3DE;--rtint:#FBECEA;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Segoe UI",Calibri,system-ui,Arial,sans-serif;color:var(--txt);background:#F5F9FE;line-height:1.6}
+  .hero{background:linear-gradient(135deg,#032D60,#0B5CAB 70%,#0176D3);color:#fff;padding:42px 26px 34px}
+  .hero .wrap,main{max-width:920px;margin:0 auto}
+  .hero .tag{display:inline-block;background:var(--sky);color:var(--navy);font-weight:700;font-size:11px;letter-spacing:1px;padding:4px 12px;border-radius:16px;margin-bottom:12px}
+  .hero h1{font-size:1.9rem;font-weight:800}
+  .hero p{color:#D9ECFB;margin-top:8px;font-size:1rem}
+  main{padding:22px 26px 70px}
+  .toc{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:16px 0}
+  .toc h3{color:var(--navy);margin-bottom:6px}
+  .toc ol{margin-left:20px}.toc li{margin:3px 0}
+  .toc a{color:var(--blue);text-decoration:none}
+  h2{color:var(--navy);font-size:1.3rem;margin:30px 0 6px;padding-bottom:6px;border-bottom:2px solid var(--tint);scroll-margin-top:12px}
+  h3{color:var(--navy2);font-size:1.05rem;margin:16px 0 6px}
+  p{margin:8px 0}
+  .arch{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+  .arch .b{color:#fff;border-radius:9px;padding:9px 13px;font-weight:700;font-size:.82rem;text-align:center}
+  .arch .ar{color:var(--navy2);font-weight:800;font-size:1.2rem}
+  .step{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0;box-shadow:0 2px 8px #0b5cab0d}
+  .step .n{display:inline-flex;min-width:26px;height:26px;padding:0 7px;border-radius:13px;background:var(--blue);color:#fff;font-weight:700;align-items:center;justify-content:center;margin-right:8px;font-size:.8rem}
+  .step h3{display:inline;color:var(--navy)}
+  pre{background:var(--codebg);color:var(--codefg);border-radius:9px;padding:13px 15px;font-family:Consolas,"Courier New",monospace;font-size:.78rem;overflow-x:auto;line-height:1.5;margin:10px 0}
+  pre .c{color:#8FD3F5}pre .g{color:#7FD4A0}pre .y{color:#FFD97A}
+  code{background:#0b5cab14;padding:1px 6px;border-radius:4px;font-family:Consolas,monospace;font-size:.9em;color:var(--navy);word-break:break-word}
+  .url{display:block;background:#0b5cab10;border:1px dashed #9ec2e8;border-radius:8px;padding:9px 12px;margin:8px 0;font-family:Consolas,monospace;font-size:.82rem;color:#0a3d73;word-break:break-all}
+  .note{border-radius:10px;padding:12px 15px;margin:12px 0;font-size:.93rem}
+  .sec{background:var(--rtint);border:1px solid #E7A99E}.sec b{color:var(--coral)}
+  .tip{background:var(--atint);border:1px solid #F0C97A}.tip b{color:var(--amber)}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:.86rem}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--navy);color:#fff}
+  tr:nth-child(even) td{background:var(--tint)}
+  ul,ol.sub{margin:8px 0 8px 22px}li{margin:4px 0}
+  .foot{text-align:center;color:var(--mut);font-size:.85rem;margin-top:30px}
+</style>
+</head>
+<body>
+<div class="hero"><div class="wrap">
+  <span class="tag">HANDS ON, COMPLETE GUIDE</span>
+  <h1>Student Lookup: a real-time integration in a Screen Flow</h1>
+  <p>A user types a roll number, Salesforce calls an external REST API, and the student result appears in a styled card. Built with clicks plus one small display component. Around 60 minutes end to end.</p>
+</div></div>
+<main>
+
+  <div class="arch">
+    <div class="b" style="background:var(--coral)">User types<br>roll number</div><span class="ar">&rarr;</span>
+    <div class="b" style="background:var(--navy2)">Screen Flow</div><span class="ar">&rarr;</span>
+    <div class="b" style="background:var(--blue)">HTTP Callout<br>(Named Credential)</div><span class="ar">&rarr;</span>
+    <div class="b" style="background:var(--amber)">Mock REST API</div><span class="ar">&rarr;</span>
+    <div class="b" style="background:var(--green)">Styled result<br>card on screen</div>
+  </div>
+
+  <div style="background:#032D60;color:#fff;border-radius:12px;padding:16px 20px;margin:16px 0;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap">
+    <div><div style="font-weight:800;font-size:1.05rem">Deployment package</div><div style="color:#cfe6fb;font-size:.9rem">The studentResultCard component and a sample flow, ready for Workbench.</div></div>
+    <a href="./StudentUI_Deploy_Workbench.zip" download style="background:#0176D3;color:#fff;font-weight:700;text-decoration:none;padding:11px 20px;border-radius:8px;white-space:nowrap">Download the zip</a>
+  </div>
+
+  <div class="toc"><h3>The steps in order</h3>
+    <ol>
+      <li><a href="#s0">Before you start and the files you have</a></li>
+      <li><a href="#s1">Get the student data (the data URL)</a></li>
+      <li><a href="#s2">Create the External Credential</a></li>
+      <li><a href="#s3">Create the Named Credential</a></li>
+      <li><a href="#s4">Grant your user access to the credential</a></li>
+      <li><a href="#s5">Create the HTTP Callout (External Service)</a></li>
+      <li><a href="#s6">Deploy the display component (LWC)</a></li>
+      <li><a href="#s7">Build the Screen Flow</a></li>
+      <li><a href="#s8">Create a Tab</a></li>
+      <li><a href="#s9">Create an App and place the flow</a></li>
+      <li><a href="#s10">Test end to end</a></li>
+      <li><a href="#purpose">The purpose of each Named Credential item</a></li>
+      <li><a href="#security">Security in this design</a></li>
+      <li><a href="#trouble">Troubleshooting the real errors</a></li>
+    </ol>
+  </div>
+
+  <h2 id="s0">1. Before you start and the files you have</h2>
+  <ul>
+    <li>A free Salesforce Developer org (developer.salesforce.com/signup).</li>
+    <li>A GitHub account, if you use the My JSON Server option in Step 1.</li>
+    <li>Workbench access (workbench.developerforce.com) if you deploy the component with a zip.</li>
+  </ul>
+  <p>Data files shared with you, in this same folder:</p>
+  <table>
+    <tr><th>File</th><th>Use it for</th></tr>
+    <tr><td>students_mock_data.json</td><td>All 200 students, wrapped as an object. Host on raw GitHub if you want everything.</td></tr>
+    <tr><td>db.json</td><td>25 students, small enough for My JSON Server (its limit is about 10 KB). id equals the roll number.</td></tr>
+    <tr><td>mockapi_students_import.json</td><td>All 200 students as strings, ready if you use the paid mockapi import.</td></tr>
+    <tr><td>StudentUI_Deploy_Workbench.zip</td><td>The display component and the updated flow, packaged for Workbench.</td></tr>
+  </table>
+  <p>Roll numbers you can test with: <code>CE2021001</code> to <code>CE2021005</code>, <code>IT2021001</code> to <code>IT2021005</code>, <code>EN2021001</code> to <code>EN2021005</code>, <code>ME2021001</code> to <code>ME2021005</code>, <code>CV2021001</code> to <code>CV2021005</code>.</p>
+
+  <h2 id="s1">2. Get the student data (the data URL)</h2>
+  <p>Salesforce reads the results from a plain URL. Pick one of the two options.</p>
+
+  <div class="step"><span class="n">Option A</span><h3>mockapi.io (what this lab uses)</h3>
+    <ol class="sub">
+      <li>Sign up at mockapi.io and create a New Project. When asked for the API Prefix, keep <code>/api/v1</code>.</li>
+      <li>Create a resource named <code>students</code>. Add these fields, all type String: <code>rollNo, firstName, lastName, email, phone, branch, year, semester, sgpa, cgpa, result, backlogs</code>. mockapi adds its own <code>id</code>.</li>
+      <li>Open the Data tab and edit a few rows so their <code>rollNo</code> values are known ones like <code>CE2021001</code>. On the free plan you edit rows by hand. On the paid plan you can import <code>mockapi_students_import.json</code>.</li>
+      <li>Your base URL looks like this, where PROJECTID is shown at the top of your project:</li>
+    </ol>
+    <span class="url">https://PROJECTID.mockapi.io/api/v1/students</span>
+    <p>Filter by roll number (this is the URL the flow will call):</p>
+    <span class="url">https://PROJECTID.mockapi.io/api/v1/students?rollNo=CE2021001</span>
+    <p>Open that in a browser first. It returns an array with one student.</p>
+  </div>
+
+  <div class="step"><span class="n">Option B</span><h3>My JSON Server on GitHub (free, no signup)</h3>
+    <ol class="sub">
+      <li>Put <code>db.json</code> at the root of a public GitHub repo, for example a repo named <code>MockData</code>, on the main branch. The file name must be exactly <code>db.json</code>.</li>
+      <li>Your live API is instantly available. Base URL:</li>
+    </ol>
+    <span class="url">https://my-json-server.typicode.com/YOURUSER/MockData/students</span>
+    <p>Filter by roll number:</p>
+    <span class="url">https://my-json-server.typicode.com/YOURUSER/MockData/students?rollNo=CE2021001</span>
+    <p>Single record, because <code>id</code> equals the roll number in db.json:</p>
+    <span class="url">https://my-json-server.typicode.com/YOURUSER/MockData/students/CE2021001</span>
+    <div class="note tip"><b>Size limit:</b> My JSON Server only serves a db.json up to about 10 KB, which is why db.json holds 25 students, not 200. For all 200, host <code>students_mock_data.json</code> on raw GitHub instead, but note raw GitHub cannot filter, so the flow would fetch all and match inside the loop.</div>
+  </div>
+
+  <div class="note tip"><b>Remember the split for the flow later:</b> the Named Credential URL is the base up to and including the prefix, for example <code>https://PROJECTID.mockapi.io/api/v1</code>. The callout Path is <code>/students</code>. The query parameter is <code>rollNo</code>.</div>
+
+  <h2 id="s2">3. Create the External Credential</h2>
+  <p>Setup, then Named Credentials, then the External Credentials tab, then New.</p>
+  <ul>
+    <li>Label and Name: <code>MockAPI_Auth</code>.</li>
+    <li>Authentication Protocol: No Authentication if available, otherwise Custom. Both are fine because the API is public.</li>
+    <li>Save, then add a Principal named <code>Anon</code>, Identity Type Named Principal.</li>
+  </ul>
+
+  <h2 id="s3">4. Create the Named Credential</h2>
+  <p>Same page, Named Credentials tab, New.</p>
+  <ul>
+    <li>Label and Name: <code>StudentAPI</code>.</li>
+    <li>URL: your base URL, for example <code>https://PROJECTID.mockapi.io/api/v1</code>.</li>
+    <li>External Credential: select <code>MockAPI_Auth</code>. Save.</li>
+  </ul>
+
+  <h2 id="s4">5. Grant your user access to the credential</h2>
+  <p>This step is easy to miss, and the callout fails silently without it.</p>
+  <ul>
+    <li>Setup, Permission Sets, New: <code>Student API Access</code>.</li>
+    <li>Open it, External Credential Principal Access, Edit, add <code>MockAPI_Auth - Anon</code>, Save.</li>
+    <li>Manage Assignments, Add Assignment, select yourself, Assign.</li>
+  </ul>
+
+  <h2 id="s5">6. Create the HTTP Callout (External Service)</h2>
+  <p>Setup, External Services, New External Service, then From HTTP Callout.</p>
+  <ul>
+    <li>Service name: <code>StudentService</code>. Named Credential: <code>StudentAPI</code>.</li>
+    <li>Add an operation: Method GET, Path <code>/students</code>, add a Query Parameter named <code>rollNo</code>.</li>
+    <li>Provide a sample response. Copy the real output from your browser, or paste this array with one student:</li>
+  </ul>
+<pre>[
+  {
+    "id": "1",
+    "rollNo": "CE2021001",
+    "firstName": "Manish",
+    "lastName": "Patil",
+    "email": "manish.patil1@dyptc.edu.in",
+    "phone": "9150017772",
+    "branch": "Computer Engineering",
+    "year": "Second Year",
+    "semester": "4",
+    "sgpa": "7.51",
+    "cgpa": "7.98",
+    "result": "PASS",
+    "backlogs": "0"
+  }
+]</pre>
+  <p>Save. The response is an array, so Salesforce generates a collection you can loop over in the flow.</p>
+
+  <h2 id="s6">7. Deploy the display component (LWC)</h2>
+  <p>Flow text cannot show a background or a real card, so a small component gives the professional look. Deploy it in one of two ways.</p>
+
+  <div class="step"><span class="n">6a</span><h3>Deploy with Workbench (using the zip)</h3>
+    <ol class="sub">
+      <li>Go to workbench.developerforce.com and log in to your org.</li>
+      <li>migration, then Deploy.</li>
+      <li>Choose <code>StudentUI_Deploy_Workbench.zip</code>.</li>
+      <li>Tick <b>Single Package</b>. Optionally tick Rollback On Error.</li>
+      <li>Next, then Deploy. The zip contains package.xml at the root, the component, and the flow.</li>
+    </ol>
+    <div class="note tip"><b>Notes:</b> the package.xml version is 67.0, which supports the flow. The dependencies (your External Service and Named Credential) already exist in the org, so they are not in the package. If Workbench reports it cannot deploy an active flow, enable Setup, Process Automation Settings, Deploy processes and flows as active, or change the flow status to Draft in the file and activate it after deploy.</div>
+  </div>
+
+  <div class="step"><span class="n">6b</span><h3>Or paste it in Code Builder</h3>
+    <p>Create a Lightning Web Component named <code>studentResultCard</code> with these four files, then deploy.</p>
+<pre><span class="c">// studentResultCard.js</span>
+import { LightningElement, api } from 'lwc';
+export default class StudentResultCard extends LightningElement {
+  @api rollNo; @api firstName; @api lastName; @api email; @api phone;
+  @api branch; @api year; @api semester; @api sgpa; @api cgpa;
+  @api result; @api backlogs;
+  get fullName(){ return `${this.firstName||''} ${this.lastName||''}`.trim(); }
+  get isPass(){ return (this.result||'').toUpperCase()==='PASS'; }
+  get badgeClass(){ return this.isPass ? 'scard-badge pass' : 'scard-badge fail'; }
+}</pre>
+<pre><span class="c">&lt;!-- studentResultCard.html --&gt;</span>
+&lt;template&gt;
+  &lt;div class="scard-bg"&gt;
+    &lt;div class="scard"&gt;
+      &lt;div class="scard-head"&gt;
+        &lt;div&gt;
+          &lt;div class="scard-name"&gt;{fullName}&lt;/div&gt;
+          &lt;div class="scard-roll"&gt;Roll Number: {rollNo}&lt;/div&gt;
+        &lt;/div&gt;
+        &lt;span class={badgeClass}&gt;{result}&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;div class="scard-grid"&gt;
+        &lt;div class="cell"&gt;&lt;span class="lbl"&gt;Branch&lt;/span&gt;&lt;span class="val"&gt;{branch}&lt;/span&gt;&lt;/div&gt;
+        &lt;div class="cell"&gt;&lt;span class="lbl"&gt;Year&lt;/span&gt;&lt;span class="val"&gt;{year}&lt;/span&gt;&lt;/div&gt;
+        &lt;div class="cell"&gt;&lt;span class="lbl"&gt;Semester&lt;/span&gt;&lt;span class="val"&gt;{semester}&lt;/span&gt;&lt;/div&gt;
+        &lt;div class="cell"&gt;&lt;span class="lbl"&gt;SGPA&lt;/span&gt;&lt;span class="val"&gt;{sgpa}&lt;/span&gt;&lt;/div&gt;
+        &lt;div class="cell"&gt;&lt;span class="lbl"&gt;CGPA&lt;/span&gt;&lt;span class="val"&gt;{cgpa}&lt;/span&gt;&lt;/div&gt;
+        &lt;div class="cell"&gt;&lt;span class="lbl"&gt;Backlogs&lt;/span&gt;&lt;span class="val"&gt;{backlogs}&lt;/span&gt;&lt;/div&gt;
+        &lt;div class="cell wide"&gt;&lt;span class="lbl"&gt;Email&lt;/span&gt;&lt;span class="val"&gt;{email}&lt;/span&gt;&lt;/div&gt;
+        &lt;div class="cell wide"&gt;&lt;span class="lbl"&gt;Phone&lt;/span&gt;&lt;span class="val"&gt;{phone}&lt;/span&gt;&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/template&gt;</pre>
+<pre><span class="c">/* studentResultCard.css */</span>
+.scard-bg{ background:linear-gradient(135deg,#032D60 0%,#0B5CAB 55%,#0176D3 100%);
+  padding:30px 22px; border-radius:16px; }
+.scard{ background:#fff; max-width:660px; margin:0 auto; border-radius:16px;
+  padding:26px 28px; box-shadow:0 14px 40px rgba(3,45,96,.28); }
+.scard-head{ display:flex; justify-content:space-between; align-items:center;
+  border-bottom:2px solid #EAF4FE; padding-bottom:16px; margin-bottom:18px; }
+.scard-name{ font-size:1.55rem; font-weight:800; color:#032D60; }
+.scard-roll{ color:#5C7099; font-size:.9rem; margin-top:4px; }
+.scard-badge{ padding:7px 18px; border-radius:22px; font-weight:800; color:#fff; }
+.scard-badge.pass{ background:#2E844A; } .scard-badge.fail{ background:#E8482F; }
+.scard-grid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+.cell{ background:#F5F9FE; border:1px solid #E0ECF9; border-radius:11px;
+  padding:11px 13px; display:flex; flex-direction:column; }
+.cell.wide{ grid-column:1 / -1; }
+.lbl{ font-size:.72rem; text-transform:uppercase; color:#5C7099; font-weight:700; }
+.val{ font-size:1.08rem; color:#16264D; font-weight:600; margin-top:3px; }</pre>
+    <p>The fourth file, <code>studentResultCard.js-meta.xml</code>, must set <code>isExposed</code> true, target <code>lightning__FlowScreen</code>, and declare each field as a String property so the flow can pass values in. The full meta file is in the kit.</p>
+  </div>
+
+  <h2 id="s7">8. Build the Screen Flow</h2>
+  <p>If you deployed the zip, the finished flow is already there. To build it by hand:</p>
+  <div class="step"><span class="n">Flow</span><h3>Screen, action, loop, decision, card</h3>
+    <ol class="sub">
+      <li><b>Search screen:</b> a Display Text title, and a Text input named <code>rollNoInput</code>, marked required.</li>
+      <li><b>Action, the HTTP Callout:</b> set the query parameter <code>rollNo</code> to <code>{!rollNoInput}</code>. For case safety, use a formula <code>UPPER({!rollNoInput})</code> instead.</li>
+      <li><b>Loop:</b> Collection Variable is the callout output <code>{!StudentService.2XX}</code>. The loop item is <code>currentStudent</code>. The list has zero or one student, so it runs at most once.</li>
+      <li><b>Assignment inside the loop, capture every field:</b>
+<pre>vRollNo    = {!currentStudent.rollNo}
+vFirstName = {!currentStudent.firstName}
+vLastName  = {!currentStudent.lastName}
+vEmail     = {!currentStudent.email}
+vPhone     = {!currentStudent.phone}
+vBranch    = {!currentStudent.branch}
+vYear      = {!currentStudent.year}
+vSemester  = {!currentStudent.semester}
+vSgpa      = {!currentStudent.sgpa}
+vCgpa      = {!currentStudent.cgpa}
+vResult    = {!currentStudent.result}
+vBacklogs  = {!currentStudent.backlogs}
+isFound    = true</pre>
+      Create each of these as Text variables first, plus a Boolean <code>isFound</code>.</li>
+      <li><b>Decision after the loop:</b> if <code>isFound</code> is true go to the result screen, otherwise a not found screen.</li>
+      <li><b>Result screen:</b> place the <code>studentResultCard</code> component and map each input to the matching variable, for example firstName to <code>{!vFirstName}</code>, result to <code>{!vResult}</code>, and so on for all twelve. You now see the styled card with every field.</li>
+      <li><b>Not found screen:</b> a friendly message such as No student found for {!rollNoInput}.</li>
+    </ol>
+    <div class="note tip"><b>Why the loop, and why not an index:</b> a filter always returns a list, even for one match. Flow has no way to read item number one, there is no 2XX[0] in Flow, so the loop lifts the record into variables. Friendly element labels help too: Initialize State, Loop Students, Capture Student Fields, Is Data Found, Result Card. The kit flow already uses these labels.</div>
+  </div>
+
+  <h2 id="s8">9. Create a Tab</h2>
+  <p>Most teams skip a standalone tab and place the flow on a Lightning App Page, then add that page to an App, which is Step 9. If you do want a dedicated tab, Setup, Tabs, create a Lightning page tab that points to the App Page you build next.</p>
+
+  <h2 id="s9">10. Create an App and place the flow</h2>
+  <ul>
+    <li>Setup, Lightning App Builder, New, App Page, one region layout. Name it Student Lookup. Drag the Flow component on and choose your flow. Save and Activate, adding it to an app or as a tab during activation.</li>
+    <li>Setup, App Manager, New Lightning App. Name it Campus Services, pick a colour and icon. On Navigation Items add your Student Lookup page. Assign it to the right profiles. Save and Finish.</li>
+    <li>Open the App Launcher, choose Campus Services, and use it.</li>
+  </ul>
+
+  <h2 id="s10">11. Test end to end</h2>
+  <ul>
+    <li>Open the app, type <code>CE2021001</code>, and the styled card appears with a PASS or FAIL badge and every field.</li>
+    <li>Type a roll number that has backlogs to see the red FAIL badge.</li>
+    <li>Type a made up roll number to see the not found screen.</li>
+    <li>If nothing returns, open the callout URL in a browser and confirm the roll number exists and the case matches.</li>
+  </ul>
+
+  <h2 id="purpose">12. The purpose of each Named Credential item</h2>
+  <table>
+    <tr><th>Item</th><th>What it holds</th><th>Why it exists</th></tr>
+    <tr><td>External Credential</td><td>How to authenticate: the protocol and the principal.</td><td>Separates how you log in from where you call, so it can be reused.</td></tr>
+    <tr><td>Principal (Anon)</td><td>The identity used on the call. Anonymous here.</td><td>For a secured API this is where the key or token lives, encrypted.</td></tr>
+    <tr><td>Named Credential</td><td>The base URL, linked to the External Credential.</td><td>Keeps the endpoint out of the flow. Change it in one place.</td></tr>
+    <tr><td>Permission Set access</td><td>Permission for a user to use the credential.</td><td>Access control. Only granted users can make the call.</td></tr>
+    <tr><td>HTTP Callout in the flow</td><td>The path, method, and parameters.</td><td>The actual request. It refers to the credential by name, never the raw URL.</td></tr>
+  </table>
+
+  <h2 id="security">13. Security in this design</h2>
+  <div class="note sec">
+    <ul>
+      <li><b>No secret in the flow.</b> The URL sits in the Named Credential, any key sits encrypted in the External Credential.</li>
+      <li><b>Access is granted, not assumed.</b> Only users with the permission set can run the callout.</li>
+      <li><b>HTTPS everywhere.</b> The callout is encrypted in transit by default.</li>
+      <li><b>Show only what is needed.</b> Display the fields the task requires and keep sensitive data off the screen.</li>
+      <li><b>Rotate in one place.</b> If a key changes, update the External Credential once, not every flow.</li>
+      <li><b>Mock data only.</b> This lab uses fabricated students. Never put real results on a public mock host. For real records use an authenticated API and fetch only what you need.</li>
+    </ul>
+  </div>
+
+  <h2 id="trouble">14. Troubleshooting the real errors</h2>
+  <table>
+    <tr><th>Symptom</th><th>Cause and fix</th></tr>
+    <tr><td>Workbench: No package.xml found</td><td>Tick the Single Package checkbox. It must be on for a zip that has package.xml at the root.</td></tr>
+    <tr><td>Property areMetricsLoggedToDataCloud not valid in version 62.0</td><td>The manifest version is too low. Set package.xml version to 67.0, which the kit already does.</td></tr>
+    <tr><td>InterpretedConnectivityDisabled or a missing label error</td><td>Use a new style Named Credential with an External Credential, deploy My Domain, and grant the permission set access.</td></tr>
+    <tr><td>Loop Collection Variable is empty</td><td>The response could not be read as a collection. Re-paste the sample with the square brackets, or use a wrapped object with a students list.</td></tr>
+    <tr><td>Display shows the merge text, not a value</td><td>You used an index like 2XX[0]. Flow has no index. Loop and use the loop item or the variables you assigned.</td></tr>
+    <tr><td>Cannot deploy an active flow</td><td>Enable Deploy processes and flows as active in Process Automation Settings, or set the flow status to Draft and activate after deploy.</td></tr>
+    <tr><td>Filter returns an empty array</td><td>The roll number is case sensitive on the mock host. Type it exactly, or use UPPER in a formula.</td></tr>
+    <tr><td>Query on the root returns nothing</td><td>Add the resource name. Use /students?rollNo, not the base URL by itself.</td></tr>
+  </table>
+
+  <p class="foot">Student Lookup Integration Lab, complete step by step. Companion to the integration slides and the studentResultCard kit.</p>
+</main>
+</body>
+</html>

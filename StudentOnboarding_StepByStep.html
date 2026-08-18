@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>First Year Onboarding on a Public Community (complete lab)</title>
+<style>
+  :root{--navy:#0F2C4C;--teal:#1AA79E;--blue:#0176D3;--sky:#6FC5FF;--tint:#EAF4FE;
+        --txt:#16264D;--mut:#5C7099;--green:#2E844A;--coral:#E8482F;--amber:#C77A12;
+        --line:#CFE0F3;--codebg:#0A1F3D;--codefg:#D6E8FF;--atint:#FFF3DE;--rtint:#FBECEA;--gtint:#EAF7F5;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Segoe UI",Calibri,system-ui,Arial,sans-serif;color:var(--txt);background:#F5F9FE;line-height:1.6}
+  .hero{background:linear-gradient(120deg,#0F2C4C 0%,#1AA79E 100%);color:#fff;padding:42px 26px 34px}
+  .hero .wrap,main{max-width:920px;margin:0 auto}
+  .hero .tag{display:inline-block;background:#d5f2ee;color:var(--navy);font-weight:700;font-size:11px;letter-spacing:1px;padding:4px 12px;border-radius:16px;margin-bottom:12px}
+  .hero h1{font-size:1.85rem;font-weight:800}
+  .hero p{color:#d5f2ee;margin-top:8px;font-size:1rem}
+  main{padding:22px 26px 70px}
+  .toc{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:16px 0}
+  .toc h3{color:var(--navy);margin-bottom:6px}.toc ol{margin-left:20px}.toc li{margin:3px 0}.toc a{color:var(--blue);text-decoration:none}
+  h2{color:var(--navy);font-size:1.3rem;margin:30px 0 6px;padding-bottom:6px;border-bottom:2px solid var(--gtint);scroll-margin-top:12px}
+  h3{color:var(--teal);font-size:1.05rem;margin:16px 0 6px}
+  p{margin:8px 0}
+  .arch{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+  .arch .b{color:#fff;border-radius:9px;padding:9px 13px;font-weight:700;font-size:.82rem;text-align:center}
+  .arch .ar{color:var(--navy);font-weight:800;font-size:1.2rem}
+  .step{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0;box-shadow:0 2px 8px #0f2c4c0d}
+  .step .n{display:inline-flex;min-width:26px;height:26px;padding:0 8px;border-radius:13px;background:var(--teal);color:#fff;font-weight:700;align-items:center;justify-content:center;margin-right:8px;font-size:.8rem}
+  .step h3{display:inline;color:var(--navy)}
+  pre{background:var(--codebg);color:var(--codefg);border-radius:9px;padding:13px 15px;font-family:Consolas,"Courier New",monospace;font-size:.8rem;overflow-x:auto;line-height:1.5;margin:10px 0}
+  pre .c{color:#8FD3F5}pre .g{color:#7FD4A0}
+  code{background:#0f2c4c14;padding:1px 6px;border-radius:4px;font-family:Consolas,monospace;font-size:.9em;color:var(--navy);word-break:break-word}
+  .url{display:block;background:#0f2c4c0d;border:1px dashed #7CC8C0;border-radius:8px;padding:9px 12px;margin:8px 0;font-family:Consolas,monospace;font-size:.82rem;color:#0a3d73;word-break:break-all}
+  .note{border-radius:10px;padding:12px 15px;margin:12px 0;font-size:.93rem}
+  .sec{background:var(--rtint);border:1px solid #E7A99E}.sec b{color:var(--coral)}
+  .tip{background:var(--atint);border:1px solid #F0C97A}.tip b{color:var(--amber)}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:.86rem}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--navy);color:#fff}
+  tr:nth-child(even) td{background:var(--gtint)}
+  ul,ol.sub{margin:8px 0 8px 22px}li{margin:4px 0}
+  .foot{text-align:center;color:var(--mut);font-size:.85rem;margin-top:30px}
+</style>
+</head>
+<body>
+<div class="hero"><div class="wrap">
+  <span class="tag">HANDS ON, COMPLETE LAB</span>
+  <h1>First Year Onboarding on a public Salesforce community</h1>
+  <p>A public page where a student enters details, uploads SSC and HSC documents, and submits. Salesforce saves an Applicant record with the files, captures the location, and emails a branded confirmation. Around 60 minutes.</p>
+</div></div>
+<main>
+
+  <div class="arch">
+    <div class="b" style="background:var(--coral)">Student on a<br>public page</div><span class="ar">&rarr;</span>
+    <div class="b" style="background:var(--navy)">studentOnboarding<br>LWC</div><span class="ar">&rarr;</span>
+    <div class="b" style="background:var(--blue)">Apex (no sharing)</div><span class="ar">&rarr;</span>
+    <div class="b" style="background:var(--amber)">Applicant + Files</div><span class="ar">&rarr;</span>
+    <div class="b" style="background:var(--green)">Confirmation<br>email</div>
+  </div>
+
+  <div style="background:#0F2C4C;color:#fff;border-radius:12px;padding:16px 20px;margin:16px 0;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap">
+    <div><div style="font-weight:800;font-size:1.05rem">Deployment package</div><div style="color:#d5f2ee;font-size:.9rem">The onboarding LWC, Apex and permission set, ready for Workbench.</div></div>
+    <a href="./StudentOnboarding_Deploy_Workbench.zip" download style="background:#1AA79E;color:#fff;font-weight:700;text-decoration:none;padding:11px 20px;border-radius:8px;white-space:nowrap">Download the zip</a>
+  </div>
+
+  <div class="toc"><h3>The steps in order</h3>
+    <ol>
+      <li><a href="#s1">Create the Applicant object and fields (by hand)</a></li>
+      <li><a href="#s2">Deploy the component with Workbench</a></li>
+      <li><a href="#s3">Turn on email deliverability</a></li>
+      <li><a href="#s4">Create the public community (Digital Experience)</a></li>
+      <li><a href="#s5">Place the component and make the page public</a></li>
+      <li><a href="#s6">Activate the site and grant guest access</a></li>
+      <li><a href="#s7">Test end to end</a></li>
+      <li><a href="#feat">What the component does</a></li>
+      <li><a href="#security">Security</a></li>
+      <li><a href="#trouble">Troubleshooting (the real errors)</a></li>
+    </ol>
+  </div>
+
+  <h2 id="s1">1. Create the Applicant object and fields (by hand)</h2>
+  <p>Setup, Object Manager, Create, Custom Object. Label <b>Applicant</b>, Record Name = Auto Number, format <code>APP-{00000}</code>. Then add these fields.</p>
+  <table>
+    <tr><th>Field label</th><th>API name</th><th>Type</th></tr>
+    <tr><td>First Name</td><td>First_Name__c</td><td>Text (60)</td></tr>
+    <tr><td>Last Name</td><td>Last_Name__c</td><td>Text (60)</td></tr>
+    <tr><td>Email</td><td>Email__c</td><td>Email</td></tr>
+    <tr><td>Phone</td><td>Phone__c</td><td>Phone</td></tr>
+    <tr><td>Address</td><td>Address__c</td><td>Text Area (Long)</td></tr>
+    <tr><td>Pincode</td><td>Pincode__c</td><td>Text (6)</td></tr>
+    <tr><td>SSC Percentage</td><td>SSC_Percentage__c</td><td>Number (5,2)</td></tr>
+    <tr><td>HSC Percentage</td><td>HSC_Percentage__c</td><td>Number (5,2)</td></tr>
+    <tr><td>Consent Given</td><td>Consent__c</td><td>Checkbox</td></tr>
+    <tr><td>Status</td><td>Status__c</td><td>Picklist: Submitted, Under Review, Approved, Rejected</td></tr>
+    <tr><td>Review Comments</td><td>Review_Comments__c</td><td>Text Area (Long)</td></tr>
+    <tr><td>Latitude</td><td>Latitude__c</td><td>Number (10,7)</td></tr>
+    <tr><td>Longitude</td><td>Longitude__c</td><td>Number (10,7)</td></tr>
+  </table>
+  <div class="note tip"><b>API names must match exactly</b>, because the Apex sets these fields by name. Create the object and fields before you deploy the component in Step 2.</div>
+
+  <h2 id="s2">2. Deploy the component with Workbench</h2>
+  <p>The zip <code>StudentOnboarding_Deploy_Workbench.zip</code> contains the LWC, the Apex controller and test, and a permission set. It does not create the object, so make sure Step 1 is done first.</p>
+  <ol class="sub">
+    <li>Go to workbench.developerforce.com and log in to your org.</li>
+    <li>migration, then Deploy. Choose the zip.</li>
+    <li>Tick <b>Single Package</b>. Optionally tick Rollback On Error. Deploy.</li>
+    <li>Assign the permission set <b>Student Onboarding Access</b> to yourself so you can run and test it internally.</li>
+  </ol>
+
+  <h2 id="s3">3. Turn on email deliverability</h2>
+  <p>Setup, Email, Deliverability. Set <b>Access to Send Email</b> to <b>All email</b>. Developer orgs block Apex email until you do this, so the confirmation would not arrive.</p>
+
+  <h2 id="s4">4. Create the public community (Digital Experience)</h2>
+  <div class="step"><span class="n">4a</span><h3>Enable and create the site</h3>
+    <ol class="sub">
+      <li>Setup, search <b>Digital Experiences</b>, Settings, tick <b>Enable Digital Experiences</b>. Accept the domain.</li>
+      <li>All Sites, <b>New</b>. Choose the <b>Customer Account Portal</b> template. Get Started.</li>
+      <li>Name it <b>Student</b> and set a URL such as <code>student</code>. Create.</li>
+      <li>Open <b>Builder</b> (Experience Builder) for the site.</li>
+    </ol>
+  </div>
+  <div class="step"><span class="n">4b</span><h3>Allow guests and add the page</h3>
+    <ol class="sub">
+      <li>In Builder, Settings, General, tick <b>Guest users can see and interact with the site without logging in</b>.</li>
+      <li>Pages menu, <b>New Page</b>, Standard Page, name it <b>Student Tracker</b>.</li>
+      <li>Components panel, under Custom, drag <b>studentOnboarding</b> onto the page.</li>
+    </ol>
+  </div>
+
+  <h2 id="s5">5. Style the page and make it public</h2>
+  <ol class="sub">
+    <li><b>Theme</b> (paint brush icon): use it to show or hide chrome. Open <b>Theme / Layout settings</b> and choose a clean layout. To show only your form, hide the header and navigation (Hide all).</li>
+    <li>Open the page <b>Page Settings</b> (gear on the page), then <b>Properties</b>, then <b>Page Access</b>, and set it to <b>Public</b>.</li>
+    <li><b>Publish</b> the site (top right).</li>
+  </ol>
+  <div class="note tip"><b>Optional:</b> select the studentOnboarding component on the page and set its <b>Full page URL</b> property to this page URL, so the "Open in full page" button works on mobile.</div>
+
+  <h2 id="s6">6. Activate the site and grant guest access</h2>
+  <ol class="sub">
+    <li>Setup, Digital Experiences, All Sites, your site, <b>Administration</b>, <b>Activate</b>. Copy the site URL.</li>
+    <li>The page is reached by adding the site path, for example:</li>
+  </ol>
+  <span class="url">https://YOURDOMAIN.my.site.com/student/s/student-tracker</span>
+  <p>(The <code>/s/</code> is the community page path. Use <code>/s/</code> for the home page, or <code>/s/student-tracker</code> for this page.)</p>
+  <div class="step"><span class="n">Guest access</span><h3>The one thing the guest user needs</h3>
+    <ol class="sub">
+      <li>In Builder, Settings, General, click the <b>Guest User Profile</b> link (or Setup, All Sites, Administration, Pages, Guest User Profile).</li>
+      <li>Give the guest user <b>Apex Class Access</b> to <b>OnboardingController</b>, or assign the <b>Student Onboarding Access</b> permission set to the guest user.</li>
+    </ol>
+    <div class="note tip"><b>That is all the guest needs.</b> The Apex runs "without sharing", so it creates the Applicant, saves the files and sends the email in system context. The guest needs no object or field permissions. Do not try to give the guest Edit on the object, the guest license does not allow it.</div>
+  </div>
+
+  <h2 id="s7">7. Test end to end</h2>
+  <ul>
+    <li>Open the public URL in an <b>incognito</b> window (logged out). Allow the browser location prompt.</li>
+    <li>Fill the form, add at least one SSC file and one HSC file, tick consent, Submit.</li>
+    <li>You see the 3D loader, then the green "Application submitted" panel.</li>
+    <li>In Salesforce, the Applicant record exists with Status Submitted, the two files under Related, and the latitude and longitude filled.</li>
+    <li>A branded confirmation email arrives with all details and the documents attached (check spam).</li>
+  </ul>
+
+  <h2 id="feat">What the component does</h2>
+  <ul>
+    <li><b>Two upload areas</b>, SSC (10th) and HSC (12th), which stack on mobile. Each requires at least one file. Files are stored with an <code>[SSC]</code> or <code>[HSC 12th]</code> prefix.</li>
+    <li><b>Validation</b> on the client and again in Apex: required fields, email format, 10 digit phone, 6 digit pincode, percentages 0 to 100, consent, allowed file types (PDF, JPG, PNG), 5 MB per file.</li>
+    <li><b>Location capture</b>: the browser asks once for permission and stores Latitude and Longitude with the application.</li>
+    <li><b>Confirmation email</b> with every submitted detail in a table and the documents attached.</li>
+    <li><b>3D cube loader</b> on page load and during submit, and a branded DY Patil header with a fresh colour theme.</li>
+  </ul>
+
+  <h2 id="security">Security</h2>
+  <div class="note sec">
+    <ul>
+      <li><b>Guest least privilege</b>: the guest gets only Apex class access. No object or field permissions, so a guest can never read or list applicants.</li>
+      <li><b>Server side validation</b>: every rule is enforced again in Apex, so nothing bad gets in even by calling the API directly.</li>
+      <li><b>File safety</b>: only PDF, JPG, PNG, and a 5 MB cap, checked in the browser and in Apex.</li>
+      <li><b>Consent</b> is captured for data protection.</li>
+      <li><b>HTTPS</b> everywhere, which also lets the browser share location.</li>
+      <li><b>Spam</b>: turn on reCAPTCHA in Builder, Settings, Security for the public form.</li>
+      <li><b>Guest file attach</b>: the code sets FirstPublishLocationId so the platform links the file, because guests cannot insert a ContentDocumentLink.</li>
+    </ul>
+  </div>
+
+  <h2 id="trouble">Troubleshooting (the real errors)</h2>
+  <table>
+    <tr><th>Symptom</th><th>Cause and fix</th></tr>
+    <tr><td>aura:systemError in the community, works internally</td><td>Guest user is missing Apex class access. Grant OnboardingController to the guest user profile, or assign the permission set to the guest.</td></tr>
+    <tr><td>INSUFFICIENT_ACCESS_ON_CROSS_REFERENCE_ENTITY, "permission to share this file"</td><td>Guests cannot insert a ContentDocumentLink. The code fixes this by setting FirstPublishLocationId on the file. Make sure the deployed Apex is the latest.</td></tr>
+    <tr><td>Cannot assign permission set to guest, "Edit Applicants" not allowed</td><td>Guest licenses do not allow Edit on custom objects. The permission set now grants only Apex class access, so it assigns cleanly.</td></tr>
+    <tr><td>No email received</td><td>Set Deliverability to All email. Also check spam. Guest email can be limited, if the record saves but no email arrives, send the email from a record triggered Flow instead.</td></tr>
+    <tr><td>Please fill all required fields when all filled</td><td>An older build. The current build reads values at submit and names the exact missing field.</td></tr>
+    <tr><td>Method does not exist: deserializeUntyped from type String</td><td>A variable was named "json", which shadows the JSON class. The code uses jsonStr now.</td></tr>
+  </table>
+
+  <p class="foot">First Year Onboarding on a public community, complete lab. Companion to the StudentOnboarding component zip.</p>
+</main>
+</body>
+</html>
